@@ -20,6 +20,7 @@ type TTask = string;
 type TTasks = {
   name: string;
   points: number;
+  priority: string;
 }[];
 
 type TAppProps = {
@@ -46,13 +47,31 @@ const taskStyles = {
       background: "gray.200",
     },
   },
+  critical: {
+    ListItem: {
+      borderBottomWidth: "1px",
+      borderBottomColor: "red.200",
+    },
+    Tag: {
+      color: "red.800",
+      background: "red.200",
+    },
+    Text: {
+      "aria-label": "critical",
+      color: "red.800",
+    },
+    IconButton: {
+      color: "red.800",
+      background: "red.200",
+    },
+  },
 };
 
 export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
 
-  const addTask = () => setTasks([...tasks, { name: task, points: Math.random() }]);
+  const addTask = () => setTasks([...tasks, { name: task, points: Math.floor(Math.random() * 100), priority: '' }]);
 
   const removeTask = (i: number) => {
     const newTasks = [...tasks];
@@ -73,18 +92,21 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
           <IconButton aria-label="Add" icon={<AddIcon />} onClick={addTask} />
         </Flex>
         <List borderTopWidth="1px" borderTopColor="gray.200">
-          {sortedTasks.map((task, i) => (
+          {sortedTasks.map((task, i) => {         
+             let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
+
+             return (
             <ListItem
               key={i}
               aria-label="task"
               py={3}
-              {...taskStyles.normal.ListItem}
+              {...taskPriority.ListItem}
             >
               <Flex justify="space-between" align="center">
-                <Tag aria-label="points" {...taskStyles.normal.Tag}>
+                <Tag aria-label="points" {...taskPriority.Tag}>
                   {task.points}
                 </Tag>{" "}
-                <Text {...taskStyles.normal.Text}>{task.name}</Text>
+                <Text {...taskPriority.Text}>{task.name}</Text>
                 <IconButton
                   aria-label="Remove"
                   icon={<DeleteIcon />}
@@ -92,7 +114,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
                 />
               </Flex>
             </ListItem>
-          ))}
+            )}
+          )}
         </List>
       </Container>
     </ChakraProvider>
