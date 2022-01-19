@@ -14,7 +14,10 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { getPrevIndex } from "@chakra-ui/utils";
+import { POINT_CONVERSION_HYBRID } from "constants";
 
+type PointsValue = any;
 type TTask = string;
 
 type TTasks = {
@@ -67,11 +70,17 @@ const taskStyles = {
   },
 };
 
-export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
+export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, pointsValue: PointsValue) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
 
-  const addTask = () => setTasks([...tasks, { name: task, points: Math.floor(Math.random() * 100), priority: '' }]);
+  const addTask = () => {
+    // check for points in the name input
+    const regex = /\d+/;
+    let inputContainsNumbers = task.match(regex)
+    inputContainsNumbers !== null ? pointsValue = inputContainsNumbers[0] : pointsValue = Math.floor(Math.random() * 100)
+    setTasks([...tasks, { name: task, points: pointsValue, priority: '' }]);
+  }
 
   const removeTask = (i: number) => {
     const newTasks = [...tasks];
@@ -92,9 +101,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
           <IconButton aria-label="Add" icon={<AddIcon />} onClick={addTask} />
         </Flex>
         <List borderTopWidth="1px" borderTopColor="gray.200">
-          {sortedTasks.map((task, i) => {         
-             let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
-
+          {sortedTasks.map((task, i) => {   
+      let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
              return (
             <ListItem
               key={i}
