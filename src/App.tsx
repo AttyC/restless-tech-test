@@ -9,15 +9,19 @@ import {
   Input,
   List,
   ListItem,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
   Text,
   theme,
   Tag,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import { getPrevIndex } from "@chakra-ui/utils";
-import { POINT_CONVERSION_HYBRID } from "constants";
 
 type PointsValue = any;
+
 type TTask = string;
 
 type TTasks = {
@@ -88,6 +92,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
     setTasks(newTasks);
   };
 
+  const updatePoints = (e: string) => setTasks([...tasks, { name: task, points: parseInt(e), priority: '' }]);
+
   let sortedTasks = tasks.sort((a, b) => Number(b.points) - Number(a.points));
 
   return (
@@ -100,9 +106,10 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
           <Input placeholder="Name" onChange={(e) => setTask(e.target.value)} />
           <IconButton aria-label="Add" icon={<AddIcon />} onClick={addTask} />
         </Flex>
+
         <List borderTopWidth="1px" borderTopColor="gray.200">
           {sortedTasks.map((task, i) => {   
-      let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
+            let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
              return (
             <ListItem
               key={i}
@@ -121,6 +128,29 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
                   onClick={() => removeTask(i)}
                 />
               </Flex>
+              <>
+                <Flex gap={2} mb={5}>
+                  <NumberInput 
+                    step={1} 
+                    key={i}
+                    value={task.points}
+                    defaultValue={0}
+                    min={0} 
+                    max={100} 
+                    allowMouseWheel 
+                    focusInputOnChange 
+                    aria-label="UpdatePoints" 
+                    onChange={updatePoints} 
+                    >
+                      <NumberInputField />
+                      <NumberInputStepper>
+                        <NumberIncrementStepper />
+                        <NumberDecrementStepper />
+                      </NumberInputStepper>
+                    </NumberInput>
+
+                </Flex>
+              </>
             </ListItem>
             )}
           )}
