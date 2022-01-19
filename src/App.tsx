@@ -52,7 +52,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
 
-  const addTask = () => setTasks([...tasks, { name: task, points: 15 }]);
+  const addTask = () => setTasks([...tasks, { name: task, points: Math.random() }]);
 
   const removeTask = (i: number) => {
     const newTasks = [...tasks];
@@ -60,7 +60,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
     setTasks(newTasks);
   };
 
-  console.log('tasks', tasks)
+  let sortedTasks = tasks.sort((a, b) => Number(b.points) - Number(a.points));
+
   return (
     <ChakraProvider theme={theme}>
       <Center py={10} bg="gray.200" mb={10}>
@@ -72,7 +73,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
           <IconButton aria-label="Add" icon={<AddIcon />} onClick={addTask} />
         </Flex>
         <List borderTopWidth="1px" borderTopColor="gray.200">
-          {tasks.map((task, i) => (
+          {sortedTasks.map((task, i) => (
             <ListItem
               key={i}
               aria-label="task"
