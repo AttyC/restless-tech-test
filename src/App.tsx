@@ -47,12 +47,17 @@ const taskStyles = {
     },
     Text: {
       "aria-label": "normal",
+      background: "gray.200",
       color: "gray.800",
+      fontWeight: "bold"
     },
     IconButton: {
       color: "gray.800",
       background: "gray.200",
     },
+    NumberInput: {
+      width: "5rem"
+    }
   },
   critical: {
     ListItem: {
@@ -65,12 +70,17 @@ const taskStyles = {
     },
     Text: {
       "aria-label": "critical",
+      background: "red.100:",
       color: "red.800",
+      fontWeight: "bold"
     },
     IconButton: {
       color: "red.800",
       background: "red.200",
     },
+    NumberInput: {
+      width: "5rem"
+    }
   },
 };
 
@@ -93,6 +103,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
   };
 
   const updatePoints = (e: string) => setTasks([...tasks, { name: task, points: parseInt(e), priority: '' }]);
+    //  setTasks((prevTasks) => [...prevTasks, { points: parseInt(e) }]) - doesn't work /** TODO **/
 
   let sortedTasks = tasks.sort((a, b) => Number(b.points) - Number(a.points));
 
@@ -133,7 +144,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
                   <NumberInput 
                     step={1} 
                     key={i}
-                    value={task.points}
+                    name={task.name}
                     defaultValue={0}
                     min={0} 
                     max={100} 
@@ -141,6 +152,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
                     focusInputOnChange 
                     aria-label="UpdatePoints" 
                     onChange={updatePoints} 
+                     {...taskPriority.NumberInput}
                     >
                       <NumberInputField />
                       <NumberInputStepper>
@@ -148,8 +160,9 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
                         <NumberDecrementStepper />
                       </NumberInputStepper>
                     </NumberInput>
-
+                                                          <label htmlFor={task.name}>Change your points</label>
                 </Flex>
+
               </>
             </ListItem>
             )}
