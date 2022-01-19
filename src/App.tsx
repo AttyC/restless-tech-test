@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   Heading,
   Container,
@@ -52,7 +52,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
 
-  const addTask = () => setTasks([...tasks, { name: task, points: 0 }]);
+  const addTask = () => setTasks([...tasks, { name: task, points: 15 }]);
 
   const removeTask = (i: number) => {
     const newTasks = [...tasks];
@@ -60,6 +60,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps) => {
     setTasks(newTasks);
   };
 
+  console.log('tasks', tasks)
   return (
     <ChakraProvider theme={theme}>
       <Center py={10} bg="gray.200" mb={10}>
