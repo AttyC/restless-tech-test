@@ -4,16 +4,12 @@ import {
   Container,
   Center,
   Flex,
+  Button,
   IconButton,
   ChakraProvider,
   Input,
   List,
   ListItem,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
   Text,
   theme,
   Tag,
@@ -27,7 +23,6 @@ type TTask = string;
 type TTasks = {
   name: string;
   points: number;
-  priority: string;
 }[];
 
 type TAppProps = {
@@ -55,8 +50,9 @@ const taskStyles = {
       color: "gray.800",
       background: "gray.200",
     },
-    NumberInput: {
-      width: "5rem"
+    PointsButton: {
+      background: "gray.100",
+      fontSize: "0.7rem"
     }
   },
   critical: {
@@ -65,7 +61,7 @@ const taskStyles = {
       borderBottomColor: "red.200",
     },
     Tag: {
-      color: "red.800",
+      color: "red.900",
       background: "red.200",
     },
     Text: {
@@ -75,11 +71,12 @@ const taskStyles = {
       fontWeight: "bold"
     },
     IconButton: {
-      color: "red.800",
       background: "red.200",
+      color: "red.800"
     },
-    NumberInput: {
-      width: "5rem"
+    PointsButton: {
+      background: "gray.100",
+      fontSize: "0.7rem"
     }
   },
 };
@@ -87,15 +84,13 @@ const taskStyles = {
 export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, pointsValue: PointsValue) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
-  const [count, setCount] = useState(0);
 
-  console.log('rendering', {count})
   const addTask = () => {
     // check for points in the name input
     const regex = /\d+/;
     let inputContainsNumbers = task.match(regex)
     inputContainsNumbers !== null ? pointsValue = inputContainsNumbers[0] : pointsValue = Math.floor(Math.random() * 100)
-    setTasks([...tasks, { name: task, points: pointsValue, priority: '' }]);
+    setTasks([...tasks, { name: task, points: pointsValue }]);
   }
 
   const removeTask = (i: number) => {
@@ -104,10 +99,20 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
     setTasks(newTasks);
   };
 
-  const updatePoints = (e: string) => setTasks([...tasks, { name: task, points: parseInt(e), priority: '' }]);
-    //  setTasks((prevTasks) => [...prevTasks, { points: parseInt(e) }]) - doesn't work /** TODO **/
 
-  let sortedTasks = tasks.sort((a, b) => Number(b.points) - Number(a.points));
+  const incrementPoints = (i: number) => {
+    const newTasks = [...tasks];
+    newTasks.splice(i, 1);
+    setTasks([...newTasks, { name: task, points: tasks[i].points + 1 }]);
+  }
+
+  const decrementPoints = (i: number) => {
+    const newTasks = [...tasks];
+    newTasks.splice(i, 1);
+    setTasks([...newTasks, { name: task, points: tasks[i].points - 1 }]);
+  }
+
+  let sortedTasks = tasks?.sort((a, b) => Number(b.points) - Number(a.points));
 
   return (
     <ChakraProvider theme={theme}>
@@ -119,7 +124,6 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
           <Input placeholder="Name" onChange={(e) => setTask(e.target.value)} />
           <IconButton aria-label="Add" icon={<AddIcon />} onClick={addTask} />
         </Flex>
-
         <List borderTopWidth="1px" borderTopColor="gray.200">
           {sortedTasks.map((task, i) => {   
             let taskPriority = task.points >= 10 ? taskStyles.critical : taskStyles.normal
@@ -132,7 +136,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
             >
               <Flex justify="space-between" align="center">
                 <Tag aria-label="points" {...taskPriority.Tag}>
-                  {count + task.points}                  
+                  {task.points}
                 </Tag>{" "}
                 <Text {...taskPriority.Text}>{task.name}</Text>
                 <IconButton
@@ -143,8 +147,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
               </Flex>
               <>
                 <Flex gap={2} mb={5}>
-                  <button onClick={() => setCount(count + 1)}>Increase points</button>
-                  <button onClick={() => setCount(count - 1)}>Decrease points</button>
+                  <Button size='xs' onClick={() => incrementPoints(i)} {...taskPriority.PointsButton}>+ points</Button>
+                  <Button size='xs' onClick={() => decrementPoints(i)} {...taskPriority.PointsButton}>- points</Button>
                 </Flex>
 
               </>
