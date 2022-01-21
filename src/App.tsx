@@ -87,7 +87,9 @@ const taskStyles = {
 export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, pointsValue: PointsValue) => {
   const [task, setTask] = useState(newTask);
   const [tasks, setTasks] = useState(initialTasks);
+  const [count, setCount] = useState(0);
 
+  console.log('rendering', {count})
   const addTask = () => {
     // check for points in the name input
     const regex = /\d+/;
@@ -130,7 +132,7 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
             >
               <Flex justify="space-between" align="center">
                 <Tag aria-label="points" {...taskPriority.Tag}>
-                  {task.points}
+                  {count + task.points}                  
                 </Tag>{" "}
                 <Text {...taskPriority.Text}>{task.name}</Text>
                 <IconButton
@@ -141,26 +143,8 @@ export const App = ({ newTask = "", tasks: initialTasks = [] }: TAppProps, point
               </Flex>
               <>
                 <Flex gap={2} mb={5}>
-                  <NumberInput 
-                    step={1} 
-                    key={i}
-                    name={task.name}
-                    defaultValue={0}
-                    min={0} 
-                    max={100} 
-                    allowMouseWheel 
-                    focusInputOnChange 
-                    aria-label="UpdatePoints" 
-                    onChange={updatePoints} 
-                     {...taskPriority.NumberInput}
-                    >
-                      <NumberInputField />
-                      <NumberInputStepper>
-                        <NumberIncrementStepper />
-                        <NumberDecrementStepper />
-                      </NumberInputStepper>
-                    </NumberInput>
-                                                          <label htmlFor={task.name}>Change your points</label>
+                  <button onClick={() => setCount(count + 1)}>Increase points</button>
+                  <button onClick={() => setCount(count - 1)}>Decrease points</button>
                 </Flex>
 
               </>
